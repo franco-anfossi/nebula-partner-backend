@@ -30,10 +30,11 @@ class CompanySerializer(serializers.ModelSerializer):
 class EmployeeSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     email = serializers.EmailField(required=True)
+    employee_type = serializers.ChoiceField(choices=(('buyer', 'Buyer'), ('seller', 'Seller')), required=False)
 
     class Meta:
         model = Employee
-        fields = ['rut', 'name', 'phone_number', 'email', 'password']
+        fields = ['rut', 'name', 'phone_number', 'email', 'password', 'employee_type']
 
     def create(self, validated_data):
         password = validated_data.pop('password')

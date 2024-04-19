@@ -20,6 +20,7 @@ class Employee(models.Model):
     phone_number = models.CharField(max_length=20)
     email = models.EmailField(max_length=255)
     company = models.ForeignKey(Company, related_name='employees', on_delete=models.CASCADE, null=True, blank=True)
+    employee_type = models.CharField(max_length=10, choices=(('buyer', 'Buyer'), ('seller', 'Seller')), blank=True, null=True)
 
     def __str__(self):
         return self.name
