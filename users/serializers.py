@@ -16,7 +16,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields = ['rut', 'name', 'phone_number', 'email', 'password']
+        fields = ['id', 'rut', 'name', 'phone_number', 'email', 'password']
 
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -34,7 +34,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ['rut', 'name', 'phone_number', 'email', 'password', 'employee_type']
+        fields = ['id', 'rut', 'name', 'phone_number', 'email', 'password', 'employee_type']
 
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -42,6 +42,6 @@ class EmployeeSerializer(serializers.ModelSerializer):
                                         email=validated_data['email'],
                                         password=password)
         company_user = self.context['request'].user.company
-
+        validated_data.pop('company', None)
         employee = Employee.objects.create(user=user, company=company_user, **validated_data)
         return employee
