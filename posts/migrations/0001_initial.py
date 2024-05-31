@@ -9,17 +9,32 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('users', '0003_employee_employee_type'),
+        ("users", "0003_employee_employee_type"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Post',
+            name="Post",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=255)),
-                ('description', models.TextField()),
-                ('creator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='posts', to='users.employee')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=255)),
+                ("description", models.TextField()),
+                (
+                    "creator",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="posts",
+                        to="users.employee",
+                    ),
+                ),
             ],
         ),
     ]

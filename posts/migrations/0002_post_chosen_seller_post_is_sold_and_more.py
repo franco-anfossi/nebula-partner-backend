@@ -7,24 +7,32 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('posts', '0001_initial'),
-        ('users', '0003_employee_employee_type'),
+        ("posts", "0001_initial"),
+        ("users", "0003_employee_employee_type"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='post',
-            name='chosen_seller',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='chosen_sales', to='users.employee'),
+            model_name="post",
+            name="chosen_seller",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="chosen_sales",
+                to="users.employee",
+            ),
         ),
         migrations.AddField(
-            model_name='post',
-            name='is_sold',
+            model_name="post",
+            name="is_sold",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='post',
-            name='possible_sellers',
-            field=models.ManyToManyField(blank=True, related_name='potential_sales', to='users.employee'),
+            model_name="post",
+            name="possible_sellers",
+            field=models.ManyToManyField(
+                blank=True, related_name="potential_sales", to="users.employee"
+            ),
         ),
     ]
