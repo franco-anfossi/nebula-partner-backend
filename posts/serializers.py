@@ -8,6 +8,7 @@ from .models import Post
 class PostSerializer(serializers.ModelSerializer):
     possible_sellers = EmployeeSerializer(many=True, read_only=True)
     chosen_seller = EmployeeSerializer(read_only=True)
+    creator = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -20,3 +21,10 @@ class PostSerializer(serializers.ModelSerializer):
             "is_sold",
             "chosen_seller",
         ]
+        read_only_fields = ['creator']
+
+    def get_creator(self, obj):
+        if obj.creator and obj.creator.user:
+            return obj.creator.user.employee.name
+        else:
+            return None
