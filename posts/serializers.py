@@ -21,7 +21,7 @@ class PostSerializer(serializers.ModelSerializer):
             "is_sold",
             "chosen_seller",
         ]
-        read_only_fields = ['creator']
+        read_only_fields = ["creator"]
 
     def get_creator(self, obj):
         if obj.creator and obj.creator.user:
