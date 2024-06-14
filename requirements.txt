@@ -1,6 +1,8 @@
 asgiref==3.8.1
+autoflake==2.3.1
 autopep8==2.2.0
 black==24.4.2
+charset-normalizer==3.3.2
 click==8.1.7
 colorama==0.4.6
 DateTime==5.5
@@ -8,6 +10,7 @@ Django==5.0.3
 django-cors-headers==4.3.1
 djangorestframework==3.15.1
 djangorestframework-simplejwt==5.3.1
+docformatter==1.7.5
 flake8==7.0.0
 isort==5.13.2
 mccabe==0.7.0
@@ -24,4 +27,5 @@ pytz==2024.1
 setuptools==69.2.0
 sqlparse==0.4.4
 tzdata==2024.1
+untokenize==0.1.1
 zope.interface==6.2
