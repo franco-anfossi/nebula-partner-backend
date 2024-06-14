@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -13,6 +12,10 @@ from .serializers import CompanySerializer, EmployeeSerializer
 
 # Create your views here.
 class CompanyRegisterView(generics.CreateAPIView):
+    """
+    This view allows the registration of a new company.
+    """
+
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     permission_classes = [permissions.AllowAny]
@@ -25,31 +28,23 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Este método permite que solo el usuario
-        asociado a una compañía pueda ver sus propios datos.
+        This method retrieves all companies, accessible by all authenticated users.
         """
-        user = self.request.user
-        if hasattr(user, "company"):
-            return Company.objects.filter(user=user)
-        return Company.objects.none()
+        return Company.objects.all()
 
     def get_object(self):
         """
-        Este método asegura que solo se pueda acceder a una compañía específica
-        si pertenece al usuario actual.
+        This method retrieves a company by its RUT without any user-specific restrictions.
         """
-        obj = super().get_object()
-        user = self.request.user
-        if obj.user != user:
-            raise PermissionDenied("No tienes permiso para acceder a esta compañía.")
-        return obj
+        rut = self.kwargs.get("rut")
+        return get_object_or_404(Company, rut=rut)
 
     @action(
         detail=False, methods=["get"], url_path="current", url_name="current_company"
     )
     def current_company(self, request):
         """
-        Devuelve la información de la compañía asociada al usuario actual.
+        This method returns the information of the company associated with the current user.
         """
         user = request.user
         if hasattr(user, "company"):
@@ -60,11 +55,35 @@ class CompanyViewSet(viewsets.ModelViewSet):
             {"detail": "Compañía no encontrada."}, status=status.HTTP_404_NOT_FOUND
         )
 
-    def partial_update(self, request, pk=None):
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="employees",
+        url_name="company_employees",
+    )
+    def employees(self, request):
         """
-        Permite actualizar parcialmente los datos de la compañía.
+        This method returns all employees of the current user's company.
         """
-        instance = get_object_or_404(Company, pk=pk)
+        user = request.user
+        if hasattr(user, "company"):
+            company = user.company
+            employees = Employee.objects.filter(company=company)
+            serializer = EmployeeSerializer(employees, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"detail": "Compañía no encontrada."}, status=status.HTTP_404_NOT_FOUND
+        )
+
+    def partial_update(self, request, rut=None):
+        """
+        This method allows the current user to partially update the company information by RUT.
+        Body: {
+            "updated_field": updated_value,
+            ...
+        }
+        """
+        instance = get_object_or_404(Company, rut=rut)
         if instance.user != request.user:
             return Response(
                 {"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN
@@ -74,8 +93,11 @@ class CompanyViewSet(viewsets.ModelViewSet):
         self.perform_update(serializer)
         return Response(serializer.data)
 
-    def destroy(self, request, pk=None):
-        instance = get_object_or_404(Company, pk=pk)
+    def destroy(self, request, rut=None):
+        """
+        This method allows the current user to delete the company by RUT.
+        """
+        instance = get_object_or_404(Company, rut=rut)
         if instance.user != request.user:
             return Response(
                 {"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN
@@ -88,6 +110,10 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
 
 class EmployeeRegisterView(generics.CreateAPIView):
+    """
+    This view allows the registration of a new employee by a user company.
+    """
+
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
     permission_classes = [permissions.IsAuthenticated, IsCompanyUser]
@@ -103,43 +129,23 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        Este método restringe la vista para que solo muestre empleados
-        de la compañía del usuario actual.
+        This method retrieves all employees.
         """
-        user = self.request.user
-        try:
-            employee = Employee.objects.get(user=user)
-            company = employee.company
-            employees = Employee.objects.filter(company=company)
-            return employees
-        except Employee.DoesNotExist:
-            return Employee.objects.none()
+        return Employee.objects.all()
 
     def get_object(self):
         """
-        Este método asegura que solo se pueda acceder a un empleado específico
-        si pertenece a la misma compañía que el usuario actual.
+        This method retrieves an employee by its RUT without any user-specific restrictions.
         """
-        obj = super().get_object()
-        user = self.request.user
-
-        try:
-            employee = Employee.objects.get(user=user)
-            if obj.company != employee.company:
-                raise PermissionDenied(
-                    "No tienes permiso para acceder a este empleado."
-                )
-        except Employee.DoesNotExist:
-            raise PermissionDenied("No tienes permiso para acceder a este empleado.")
-
-        return obj
+        rut = self.kwargs.get("rut")
+        return get_object_or_404(Employee, rut=rut)
 
     @action(
         detail=False, methods=["get"], url_path="current", url_name="current_employee"
     )
     def current_employee(self, request):
         """
-        Devuelve la información del empleado asociado al usuario actual.
+        This method returns the information of the employee associated with the current user.
         """
         user = request.user
         try:
@@ -151,37 +157,57 @@ class EmployeeViewSet(viewsets.ModelViewSet):
                 {"detail": "Empleado no encontrado."}, status=status.HTTP_404_NOT_FOUND
             )
 
-    def perform_create(self, serializer):
+    @action(
+        detail=False, methods=["get"], url_path="company", url_name="employee_company"
+    )
+    def company(self, request):
         """
-        Sobreescribe la creación para asegurar que los
-        empleados se crean bajo la compañía del usuario.
+        This method returns the company of the current user employee.
         """
-        if not hasattr(self.request.user, "company"):
+        user = request.user
+        try:
+            employee = Employee.objects.get(user=user)
+            company = employee.company
+            serializer = CompanySerializer(company)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Employee.DoesNotExist:
             return Response(
-                {"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN
+                {"detail": "Empleado no encontrado."}, status=status.HTTP_404_NOT_FOUND
             )
-        serializer.save(company=self.request.user.company)
 
-    def partial_update(self, request, pk=None):
+    def partial_update(self, request, rut=None):
         """
-        Actualiza parcialmente la información de un empleado.
+        This method allows the current user or their company to update the employee information by RUT.
+        Body: {
+            "updated_field": new_value,
+            ...
+        }
         """
-        instance = get_object_or_404(Employee, pk=pk)
-        if instance.company.user != request.user:
+        instance = get_object_or_404(Employee, rut=rut)
+        user = request.user
+
+        if instance.user != user and instance.company.user != user:
             return Response(
                 {"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN
             )
+
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
 
-    def destroy(self, request, pk=None):
-        instance = get_object_or_404(Employee, pk=pk)
-        if instance.company.user != request.user:
+    def destroy(self, request, rut=None):
+        """
+        This method allows the current user or their company to delete the employee information by RUT.
+        """
+        instance = get_object_or_404(Employee, rut=rut)
+        user = request.user
+
+        if instance.user != user and instance.company.user != user:
             return Response(
                 {"detail": "No autorizado."}, status=status.HTTP_403_FORBIDDEN
             )
+
         instance.delete()
         return Response(
             {"detail": "Empleado eliminado correctamente."},
@@ -192,6 +218,9 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
+        """
+        This method adds the user type to the token response.
+        """
         token = super().get_token(user)
         # Add custom claims
         token["user_type"] = "company" if hasattr(user, "company") else "employee"
@@ -202,6 +231,13 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
     def post(self, request, *args, **kwargs):
+        """
+        This method returns the token response with the user type.
+        Body: {
+            "username": "user's username",
+            "password": "user's password"
+        }
+        """
         serializer = self.get_serializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
