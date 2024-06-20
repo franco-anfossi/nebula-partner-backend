@@ -1,0 +1,22 @@
+databases:
+  - name: nebula_partner_db
+    plan: free
+    databaseName: nebula_partner_db
+    user: nebula_partner
+
+services:
+  - type: web
+    plan: free
+    name: nebula_partner
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn partner_backend.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: nebula_partner_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: WEB_CONCURRENCY
+        value: 4
