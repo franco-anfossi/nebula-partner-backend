@@ -22,6 +22,7 @@ mypy-extensions==1.0.0
 nodeenv==1.9.1
 packaging==24.0
 pathspec==0.12.1
+pip-check-reqs==2.5.3
 platformdirs==4.2.2
 pre-commit==3.7.1
 psycopg2-binary==2.9.9
@@ -37,4 +38,3 @@ tzdata==2024.1
 untokenize==0.1.1
 virtualenv==20.26.2
 zope.interface==6.2
-pandas==1.4.1
