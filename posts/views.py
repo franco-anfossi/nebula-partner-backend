@@ -14,18 +14,16 @@ class PostViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        """
-        This method returns all the posts in the database.
-        """
+        """This method returns all the posts in the database."""
+
         return Post.objects.all()
 
     @action(
         detail=False, methods=["get"], url_path="current", url_name="current_user_posts"
     )
     def get_current_user_posts(self, request):
-        """
-        This method returns all posts created by the current authenticated user.
-        """
+        """This method returns all posts created by the current authenticated user."""
+
         user = request.user
         if hasattr(user, "employee"):
             posts = Post.objects.filter(creator=user.employee)
@@ -40,9 +38,8 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def perform_create(self, serializer):
-        """
-        This method ensures that only 'buyer' employees can create posts.
-        """
+        """This method ensures that only 'buyer' employees can create posts."""
+
         user = self.request.user
         if hasattr(user, "employee") and user.employee.employee_type == "buyer":
             serializer.save(creator=user.employee)
@@ -59,9 +56,12 @@ class PostViewSet(viewsets.ModelViewSet):
     )
     def add_seller(self, request, pk=None):
         """
-        This method allows a 'seller' to add themselves to a post as a possible seller.
+        This method allows a 'seller' to add
+        themselves to a post as a possibleseller.
+
         Body: {}
         """
+
         post = self.get_object()
         # Verificar que el usuario autenticado sea un 'seller'
         if (
@@ -70,7 +70,10 @@ class PostViewSet(viewsets.ModelViewSet):
         ):
             return Response(
                 {
-                    "detail": "No autorizado. Solo los 'sellers' pueden agregarse a un post."
+                    "detail": (
+                        "No autorizado. Solo los 'sellers' "
+                        "pueden agregarse a un post."
+                    )
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
@@ -105,8 +108,10 @@ class PostViewSet(viewsets.ModelViewSet):
     )
     def posts_as_possible_seller(self, request):
         """
-        This method returns all posts where the current user is listed as a possible seller.
+        This method returns all posts where the
+        current user is listed as a possible seller.
         """
+
         user = request.user
         if hasattr(user, "employee") and user.employee.employee_type == "seller":
             posts = Post.objects.filter(possible_sellers=user.employee)
@@ -126,10 +131,12 @@ class PostViewSet(viewsets.ModelViewSet):
     def choose_seller(self, request, pk=None):
         """
         This method allows the 'buyer' to choose a 'seller' for the post.
+
         Body: {
             "seller_rut": "<rut_del_vendedor>"
         }
         """
+
         post = self.get_object()
 
         if (
@@ -184,11 +191,14 @@ class PostViewSet(viewsets.ModelViewSet):
     )
     def remove_seller(self, request, pk=None):
         """
-        This method allows a 'seller' to remove themselves from a post, or the 'buyer' to remove a 'seller' from the post.
+        This method allows a 'seller' to remove themselves from
+        a post, or the 'buyer' to remove a 'seller' from the post.
+
         Body: {
             "seller_rut": "<rut_del_vendedor>"
         }
         """
+
         post = self.get_object()
         user = request.user
 
@@ -201,7 +211,10 @@ class PostViewSet(viewsets.ModelViewSet):
         ):
             return Response(
                 {
-                    "detail": "No autorizado. Solo los 'sellers' pueden eliminarse de un post o el 'buyer' puede eliminar un 'seller'."
+                    "detail": (
+                        "No autorizado. Solo los 'sellers'pueden eliminarse "
+                        "de un post o el 'buyer' puede eliminar un 'seller'."
+                    )
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
@@ -217,7 +230,10 @@ class PostViewSet(viewsets.ModelViewSet):
         if seller not in post.possible_sellers.all():
             return Response(
                 {
-                    "detail": "Este seller no está en la lista de posibles sellers de este post."
+                    "detail": (
+                        "Este seller no está en la lista "
+                        "de posibles sellers de este post."
+                    )
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -226,26 +242,35 @@ class PostViewSet(viewsets.ModelViewSet):
         post.save()
         return Response(
             {
-                "detail": "El seller ha sido eliminado de la lista de posibles sellers de este post."
+                "detail": (
+                    "El seller ha sido eliminado de "
+                    "la lista de posibles sellers de este post."
+                )
             },
             status=status.HTTP_200_OK,
         )
 
     def partial_update(self, request, pk=None):
         """
-        This method allows only the creator of the post to update the post information.
+        This method allows only the creator of the
+        post to update the post information.
+
         Body: {
             "updated_field": "new_value",
             ...
         }
         """
+
         post = self.get_object()
         user = request.user
 
         if post.creator != user.employee:
             return Response(
                 {
-                    "detail": "No autorizado. Solo el creador del post puede actualizar la información del post."
+                    "detail": (
+                        "No autorizado. Solo el creador del post "
+                        "puede actualizar la información del post."
+                    )
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
@@ -256,16 +281,18 @@ class PostViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, pk=None):
-        """
-        This method allows only the creator of the post to delete the post.
-        """
+        """This method allows only the creator of the post to delete the post."""
+
         post = self.get_object()
         user = request.user
 
         if post.creator != user.employee:
             return Response(
                 {
-                    "detail": "No autorizado. Solo el creador del post puede eliminar el post."
+                    "detail": (
+                        "No autorizado. Solo el creador "
+                        "del post puede eliminar el post."
+                    )
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )

@@ -12,9 +12,7 @@ from .serializers import CompanySerializer, EmployeeSerializer
 
 # Create your views here.
 class CompanyRegisterView(generics.CreateAPIView):
-    """
-    This view allows the registration of a new company.
-    """
+    """This view allows the registration of a new company."""
 
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
@@ -28,14 +26,18 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """
-        This method retrieves all companies, accessible by all authenticated users.
+        This method retrieves all companies,
+        accessible by all authenticated users.
         """
+
         return Company.objects.all()
 
     def get_object(self):
         """
-        This method retrieves a company by its RUT without any user-specific restrictions.
+        This method retrieves a company by its RUT
+        without any user-specific restrictions.
         """
+
         rut = self.kwargs.get("rut")
         return get_object_or_404(Company, rut=rut)
 
@@ -44,8 +46,10 @@ class CompanyViewSet(viewsets.ModelViewSet):
     )
     def current_company(self, request):
         """
-        This method returns the information of the company associated with the current user.
+        This method returns the information of
+        the company associated with the current user.
         """
+
         user = request.user
         if hasattr(user, "company"):
             company = user.company
@@ -62,9 +66,8 @@ class CompanyViewSet(viewsets.ModelViewSet):
         url_name="company_employees",
     )
     def employees(self, request):
-        """
-        This method returns all employees of the current user's company.
-        """
+        """This method returns all employees of the current user's company."""
+
         user = request.user
         if hasattr(user, "company"):
             company = user.company
@@ -77,12 +80,15 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, rut=None):
         """
-        This method allows the current user to partially update the company information by RUT.
+        This method allows the current user to partially
+        update the company information by RUT.
+
         Body: {
             "updated_field": updated_value,
             ...
         }
         """
+
         instance = get_object_or_404(Company, rut=rut)
         if instance.user != request.user:
             return Response(
@@ -94,9 +100,8 @@ class CompanyViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def destroy(self, request, rut=None):
-        """
-        This method allows the current user to delete the company by RUT.
-        """
+        """This method allows the current user to delete the company by RUT."""
+
         instance = get_object_or_404(Company, rut=rut)
         if instance.user != request.user:
             return Response(
@@ -110,9 +115,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
 
 class EmployeeRegisterView(generics.CreateAPIView):
-    """
-    This view allows the registration of a new employee by a user company.
-    """
+    """This view allows the registration of a new employee by a user company."""
 
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
@@ -128,15 +131,16 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        """
-        This method retrieves all employees.
-        """
+        """This method retrieves all employees."""
+
         return Employee.objects.all()
 
     def get_object(self):
         """
-        This method retrieves an employee by its RUT without any user-specific restrictions.
+        This method retrieves an employee by its
+        RUT without any user-specific restrictions.
         """
+
         rut = self.kwargs.get("rut")
         return get_object_or_404(Employee, rut=rut)
 
@@ -145,8 +149,10 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     )
     def current_employee(self, request):
         """
-        This method returns the information of the employee associated with the current user.
+        This method returns the information of
+        the employee associated with the current user.
         """
+
         user = request.user
         try:
             employee = Employee.objects.get(user=user)
@@ -161,9 +167,8 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         detail=False, methods=["get"], url_path="company", url_name="employee_company"
     )
     def company(self, request):
-        """
-        This method returns the company of the current user employee.
-        """
+        """This method returns the company of the current user employee."""
+
         user = request.user
         try:
             employee = Employee.objects.get(user=user)
@@ -177,12 +182,15 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, rut=None):
         """
-        This method allows the current user or their company to update the employee information by RUT.
+        This method allows the current user or their company
+        to update the employee information by RUT.
+
         Body: {
             "updated_field": new_value,
             ...
         }
         """
+
         instance = get_object_or_404(Employee, rut=rut)
         user = request.user
 
@@ -198,8 +206,10 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, rut=None):
         """
-        This method allows the current user or their company to delete the employee information by RUT.
+        This method allows the current user or their
+        company to delete the employee information by RUT.
         """
+
         instance = get_object_or_404(Employee, rut=rut)
         user = request.user
 
@@ -218,9 +228,8 @@ class EmployeeViewSet(viewsets.ModelViewSet):
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
-        """
-        This method adds the user type to the token response.
-        """
+        """This method adds the user type to the token response."""
+
         token = super().get_token(user)
         # Add custom claims
         token["user_type"] = "company" if hasattr(user, "company") else "employee"
@@ -233,11 +242,13 @@ class MyTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         """
         This method returns the token response with the user type.
+
         Body: {
             "username": "user's username",
             "password": "user's password"
         }
         """
+
         serializer = self.get_serializer(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
