@@ -1,10 +1,10 @@
 from typing import Optional
 
 from dotenv import load_dotenv
-from pydantic import AnyHttpUrl, ConfigDict
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 class Settings(BaseSettings):
@@ -22,19 +22,21 @@ class Settings(BaseSettings):
 
     # Configuración de Auth0
     AUTH0_DOMAIN: str
-    AUTH0_CLIENT_ID: str
-    AUTH0_CLIENT_SECRET: str
     AUTH0_AUDIENCE: Optional[str]
-    AUTH0_CALLBACK_URL: Optional[AnyHttpUrl]
 
     # Configuración de JWT
-    JWT_SECRET_KEY: str
-    JWT_ALGORITHM: str
+    JWT_ALGORITHM: str = "RS256"
 
     # Configuración de CORS
-    ALLOWED_ORIGINS: str = ["*"]
-    ALLOWED_METHODS: str = ["*"]
-    ALLOWED_HEADERS: str = ["*"]
+    ALLOWED_ORIGINS: str = [
+        "*",
+    ]
+    ALLOWED_METHODS: str = [
+        "*",
+    ]
+    ALLOWED_HEADERS: str = [
+        "*",
+    ]
     ALLOW_CREDENTIALS: bool = True
 
     model_config = ConfigDict(case_sensitive=True)
