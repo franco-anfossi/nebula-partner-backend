@@ -69,3 +69,7 @@ db-rollback-to:
 # Actualizar dependencias
 update-deps:
 	poetry update
+
+# generar estructura de la api
+structure:
+	$(PYTHON) python generate_structure.py
