@@ -1,4 +1,3 @@
-import os
 from typing import Dict
 
 import requests
@@ -6,10 +5,12 @@ from fastapi import HTTPException
 from fastapi.security import HTTPBearer
 from jose import JWTError, jwt
 
+from config import settings
+
 # Variables de entorno cargadas desde el .env
-AUTH0_DOMAIN = os.getenv("AUTH0_DOMAIN")
-API_AUDIENCE = os.getenv("AUTH0_AUDIENCE")
-ALGORITHMS = os.getenv("ALGORITHMS", "RS256").split(",")
+AUTH0_DOMAIN = settings.AUTH0_DOMAIN
+API_AUDIENCE = settings.AUTH0_AUDIENCE
+ALGORITHMS = [settings.JWT_ALGORITHM]
 
 auth_scheme = HTTPBearer()
 
