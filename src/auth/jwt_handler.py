@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from fastapi.security import HTTPBearer
 from jose import JWTError, jwt
 
-from config import settings
+from ..config import settings
 
 # Variables de entorno cargadas desde el .env
 AUTH0_DOMAIN = settings.AUTH0_DOMAIN

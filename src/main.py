@@ -16,6 +16,7 @@ app.add_middleware(
 
 app.include_router(auth_router, prefix="/auth", tags=["Auth"])
 
+
 # Ruta de bienvenida
 @app.get("/")
 async def read_root():
