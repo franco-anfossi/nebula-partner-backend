@@ -6,23 +6,30 @@ def generate_structure(root_dir, output_file, exclude_dirs=None):
         exclude_dirs = []
 
     def print_tree(dir_path, prefix="", file=None):
-        # Filtra las carpetas que deben ser excluidas
         contents = [d for d in os.listdir(dir_path) if d not in exclude_dirs]
-        # Ordena el contenido para mantener carpetas y archivos organizados
-        contents.sort()
-        # Define los punteros para las ramas del árbol
-        pointers = ["├── "] * (len(contents) - 1) + ["└── "]
+        folders = sorted(
+            [c for c in contents if os.path.isdir(os.path.join(dir_path, c))]
+        )
+        files = sorted(
+            [c for c in contents if os.path.isfile(os.path.join(dir_path, c))]
+        )
 
-        for pointer, name in zip(pointers, contents):
+        sorted_contents = folders + files
+        pointers = ["├── "] * (len(sorted_contents) - 1) + ["└── "]
+
+        for pointer, name in zip(pointers, sorted_contents):
             path = os.path.join(dir_path, name)
-            file.write(f"{prefix}{pointer}{name}\n")
-            # Si es un directorio, llama recursivamente para imprimir su contenido
             if os.path.isdir(path):
+                file.write(f"{prefix}{pointer}{name}/\n")
                 extension = "│   " if pointer == "├── " else "    "
                 print_tree(path, prefix + extension, file)
+            else:
+                file.write(f"{prefix}{pointer}{name}\n")
+
+    repo_name = os.path.basename(os.path.abspath(root_dir))
 
     with open(output_file, "w") as f:
-        f.write(f"{os.path.basename(root_dir)}/\n")
+        f.write(f"{repo_name}/\n")
         print_tree(root_dir, "", f)
 
 
