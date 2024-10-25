@@ -29,13 +29,15 @@ def generate_structure(root_dir, output_file, exclude_dirs=None):
     repo_name = os.path.basename(os.path.abspath(root_dir))
 
     with open(output_file, "w") as f:
+        f.write("```\n")
         f.write(f"{repo_name}/\n")
         print_tree(root_dir, "", f)
+        f.write("```\n")
 
 
 if __name__ == "__main__":
     generate_structure(
         ".",
-        "estructura.md",
+        "structure.md",
         exclude_dirs=[".git", "__pycache__", "venv", ".ruff_cache"],
     )

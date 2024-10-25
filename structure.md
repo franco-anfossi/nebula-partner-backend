@@ -1,3 +1,4 @@
+```
 nebula-partner-backend/
 ├── alembic/
 │   ├── versions/
@@ -35,4 +36,6 @@ nebula-partner-backend/
 ├── generate_structure.py
 ├── logging.ini
 ├── poetry.lock
-└── pyproject.toml
+├── pyproject.toml
+└── structure.md
+```
