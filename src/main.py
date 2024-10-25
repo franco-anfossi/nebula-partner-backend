@@ -1,29 +1,21 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 from .auth.routes import router as auth_router
-from .config import settings
+from .middleware.cors import setup_cors
+from .supplier.routes import router as supplier_router
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS.split(","),
-    allow_credentials=settings.ALLOW_CREDENTIALS,
-    allow_methods=settings.ALLOWED_METHODS.split(","),
-    allow_headers=settings.ALLOWED_HEADERS.split(","),
-)
-
-app.include_router(auth_router, prefix="/auth", tags=["Auth"])
+setup_cors(app)
+app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
+app.include_router(supplier_router, prefix="/api/suppliers", tags=["Supplier"])
 
 
-# Ruta de bienvenida
 @app.get("/")
 async def read_root():
     return {"message": "Welcome to the API!"}
 
 
-# Ruta de salud para verificar si la API está funcionando
-@app.get("/health")
+@app.get("/api/health")
 async def health_check():
     return {"status": "healthy"}
