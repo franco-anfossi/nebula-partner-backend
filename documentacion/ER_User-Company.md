@@ -1,52 +1,55 @@
-# **Modelo de Usuarios y Empresas - Partner App**
+# **Modelos y Entidades - Usuarios y Empresas - Partner App**
 
-Este archivo describe en detalle los modelos, tablas, relaciones y reglas de negocio para la gestión de **Usuarios** y **Empresas** en la plataforma.
+Este documento describe los modelos y las relaciones necesarias para implementar todas las historias de usuario definidas para el módulo de **Usuarios y Empresas**.
 
 ---
 
 ## **1. Modelos y Tablas**
 
-### **1.1. Usuario (Auth0)**  
+### **1.1. Usuario (Auth0)**
 **Tabla:** `usuario_auth0`  
-Almacena la información esencial del usuario gestionada a través de Auth0.
+Almacena la información esencial de los usuarios gestionada por Auth0.
 
 | Atributo          | Tipo de Dato       | Descripción                       |
 |-------------------|--------------------|-----------------------------------|
 | id                | UUID PRIMARY KEY   | Identificador único del usuario. |
-| email             | VARCHAR(255) UNIQUE | Correo del usuario.             |
+| email             | VARCHAR(255) UNIQUE | Correo electrónico del usuario. |
 | estado            | BOOLEAN            | Activo/Inactivo.                 |
-| creado_en         | TIMESTAMP          | Fecha de creación.               |
+| creado_en         | TIMESTAMP          | Fecha de creación del usuario.   |
+| password_hash     | TEXT               | Hash de la contraseña (opcional para Auth0). |
+
+**Nota:** La gestión de contraseñas es delegada a **Auth0**. En caso de manejar contraseñas localmente, el **hash** se almacena en el campo `password_hash`.
 
 ---
 
-### **1.2. Usuario (Datos Adicionales)**  
+### **1.2. Usuario (Datos Adicionales)**
 **Tabla:** `usuarios`  
-Almacena la información adicional de los usuarios que no es manejada por Auth0.
+Almacena los datos adicionales no gestionados por Auth0.
 
 | Atributo          | Tipo de Dato       | Descripción                       |
 |-------------------|--------------------|-----------------------------------|
 | id                | UUID PRIMARY KEY   | Mismo ID que en `usuario_auth0`. |
-| nombre            | VARCHAR(100)       | Nombre completo del usuario.     |
-| rut               | VARCHAR(12) UNIQUE | RUT del usuario (validación nacional). |
+| nombre            | VARCHAR(100)       | Nombre del usuario.              |
+| rut               | VARCHAR(12) UNIQUE | RUT del usuario validado.        |
 | creado_en         | TIMESTAMP          | Fecha de creación del registro.  |
 
 ---
 
-### **1.3. Empresa**  
+### **1.3. Empresa**
 **Tabla:** `empresas`  
-Contiene la información básica de las empresas registradas en la plataforma.
+Almacena la información de las empresas registradas.
 
 | Atributo          | Tipo de Dato       | Descripción                       |
 |-------------------|--------------------|-----------------------------------|
 | id                | SERIAL PRIMARY KEY | Identificador único de la empresa. |
 | nombre            | VARCHAR(255)       | Nombre de la empresa.            |
-| rut               | VARCHAR(12) UNIQUE | RUT de la empresa.               |
+| rut               | VARCHAR(12) UNIQUE | RUT único de la empresa.         |
 | estado            | BOOLEAN            | Activo/Inactivo.                 |
-| creado_en         | TIMESTAMP          | Fecha de creación.               |
+| creado_en         | TIMESTAMP          | Fecha de creación de la empresa. |
 
 ---
 
-### **1.4. Dirección de Empresa (Matriz)**  
+### **1.4. Dirección de Empresa**
 **Tabla:** `direcciones`  
 Define la dirección de la casa matriz de las empresas.
 
@@ -62,7 +65,7 @@ Define la dirección de la casa matriz de las empresas.
 
 ---
 
-### **1.5. Usuario-Empresa**  
+### **1.5. Usuario-Empresa**
 **Tabla:** `usuarios_empresas`  
 Gestión de la relación N:M entre usuarios y empresas.
 
@@ -76,7 +79,7 @@ Gestión de la relación N:M entre usuarios y empresas.
 
 ---
 
-### **1.6. Rol**  
+### **1.6. Roles**
 **Tabla:** `roles`  
 Define los roles que pueden asignarse a los usuarios dentro de las empresas.
 
@@ -85,13 +88,13 @@ Define los roles que pueden asignarse a los usuarios dentro de las empresas.
 | id                | SERIAL PRIMARY KEY | Identificador único del rol.     |
 | nombre            | VARCHAR(100)       | Nombre del rol.                  |
 | descripcion       | TEXT               | Descripción del rol.             |
-| transferible      | BOOLEAN            | Indica si el rol puede ser transferido. |
+| transferible      | BOOLEAN            | Indica si el rol es transferible.|
 
 ---
 
-### **1.7. Permiso**  
+### **1.7. Permisos**
 **Tabla:** `permisos`  
-Define los permisos específicos asociados a los roles.
+Define los permisos específicos que pueden ser asociados a los roles.
 
 | Atributo          | Tipo de Dato       | Descripción                       |
 |-------------------|--------------------|-----------------------------------|
@@ -101,52 +104,64 @@ Define los permisos específicos asociados a los roles.
 
 ---
 
-## **2. Reglas de Negocio y Funciones**  
+### **1.8. Notificaciones**
+**Tabla:** `notificaciones`  
+Gestiona las notificaciones enviadas a los usuarios sobre eventos importantes.
 
-1. **Asignación de Roles Múltiples:**  
-   - Un usuario puede tener varios roles dentro de una empresa.  
-   - Los permisos asociados a esos roles se combinan para definir el acceso final.
-
-2. **Usuarios en Múltiples Empresas:**  
-   - Un usuario puede trabajar para varias empresas. Cada relación mantiene su estado y roles.
-
-3. **Permisos por Tipo:**  
-   - Los permisos se dividen en **Visualización** y **Operación**, permitiendo una configuración granular.
-
-4. **Estado de Usuario:**  
-   - Si un usuario pierde todas sus asociaciones con empresas, solo podrá operar como persona natural o buscar nuevas asociaciones.
-
-5. **Índices:**  
-   - Se deben crear índices en los campos `email` y `rut` para optimizar las consultas.
-
-6. **Integridad Referencial:**  
-   - Las relaciones entre tablas se asegurarán mediante **restricciones FOREIGN KEY**.
-
-7. **Migraciones:**  
-   - Todas las tablas deben ser gestionadas mediante migraciones para mantener la coherencia del esquema.
+| Atributo          | Tipo de Dato       | Descripción                       |
+|-------------------|--------------------|-----------------------------------|
+| id                | SERIAL PRIMARY KEY | Identificador único de la notificación. |
+| usuario_id        | UUID               | FK hacia `usuarios`.             |
+| mensaje           | TEXT               | Contenido de la notificación.    |
+| leido             | BOOLEAN            | Indica si la notificación fue leída. |
+| fecha_hora        | TIMESTAMP          | Fecha y hora de la notificación. |
 
 ---
 
-## **3. Esquema de Relaciones Clave**  
+## **2. Relaciones Clave**
 
 1. **Usuario ↔ Empresa (N:M):**  
-   - Un usuario puede estar asociado a varias empresas.  
+   - Un usuario puede estar asociado a varias empresas.
    - Una empresa puede tener múltiples usuarios.
 
 2. **Usuario ↔ Rol (N:M):**  
-   - Un usuario puede tener varios roles asignados dentro de una empresa.  
-   - Los roles definen qué acciones puede realizar cada usuario.
+   - Cada usuario puede tener varios roles en una empresa.
+   - Los roles definen las acciones permitidas.
 
 3. **Rol ↔ Permiso (1:N):**  
-   - Un rol tiene múltiples permisos asociados.
+   - Un rol tiene múltiples permisos asignados.
 
 4. **Empresa ↔ Dirección (1:1):**  
    - Cada empresa tiene una única dirección de casa matriz.
 
+5. **Usuario ↔ Notificación (1:N):**  
+   - Cada usuario puede tener múltiples notificaciones.
+
 ---
 
-## **4. Esquema en PostgreSQL**  
-Este diseño será implementado utilizando **PostgreSQL** como base de datos relacional. Las relaciones **N:M** se manejarán mediante tablas intermedias para mantener la flexibilidad del modelo.
+## **3. Reglas de Negocio y Funciones**
+
+1. **Asignación de Roles Múltiples:**  
+   - Los usuarios pueden tener varios roles dentro de una misma empresa.
+
+2. **Gestión de Invitaciones:**  
+   - Los administradores pueden invitar usuarios por email para unirse a la empresa.
+
+3. **Validación de RUT:**  
+   - Tanto los usuarios como las empresas deben tener un RUT válido y único.
+
+4. **Estado de Usuario y Empresa:**  
+   - Los usuarios pueden estar activos o inactivos en empresas específicas.
+   - Las empresas pueden activarse o desactivarse según su estado.
+
+5. **Notificaciones:**  
+   - Las notificaciones se envían a los usuarios para eventos importantes, como cambios de estado o nuevas asociaciones.
+
+---
+
+## **4. Esquema en PostgreSQL**
+
+Este diseño se implementará utilizando **PostgreSQL** como base de datos relacional. Las relaciones N:M se manejarán con tablas intermedias para mantener la flexibilidad del modelo.
 
 ---
 
