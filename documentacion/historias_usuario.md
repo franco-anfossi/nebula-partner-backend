@@ -1,124 +1,73 @@
-# Historias de Usuario - Plataforma de Gestión de Proveedores
+# **Historias de Usuario - Módulo de Usuarios y Empresas - Partner App**
 
-## Historia de Usuario 1: Crear modelo de proveedor con datos extendidos asociados a un Auth ID
-**Como** proveedor,  
-**quiero** que mi perfil en la plataforma esté vinculado con mi Auth ID,  
-**para** gestionar mi información específica sin necesidad de almacenar datos sensibles como mi correo o contraseña.
+## **1. Registro, Autenticación y Creación de Empresas (RAC)**
 
-### Criterios de Aceptación:
-- El Auth ID será utilizado como identificador principal para el proveedor.
-- La información extendida debe incluir:
-  - Nombre comercial.
-  - Dirección.
-  - Rubros/actividades específicos.
-  - Descripción general de la empresa.
-- Debe existir un endpoint `/provider/profile` que devuelva esta información extendida.
+### **RAC-01**: Registro y Autenticación
+1. Como **usuario**, quiero registrarme en la plataforma utilizando mi email y contraseña mediante Auth0, para acceder a la aplicación.
+2. Como **usuario**, quiero poder recuperar mi contraseña en caso de haberla olvidado, mediante un flujo de recuperación en Auth0.
+3. Como **usuario autenticado**, quiero iniciar sesión con mis credenciales para acceder a mis empresas asociadas o como persona natural.
+
+### **RAC-02**: Creación de Empresa
+4. Como **usuario registrado**, quiero crear una empresa a través de un formulario con los datos necesarios para revisión.
+5. Como **equipo de revisión**, quiero validar y aprobar o rechazar la solicitud de creación de la empresa.
+6. Como **usuario creador**, quiero ser asignado automáticamente como administrador de la empresa aprobada.
 
 ---
 
-## Historia de Usuario 2: Implementación de roles en Auth0
-**Como** administrador,  
-**quiero** gestionar los roles de los usuarios desde Auth0,  
-**para** definir los permisos y accesos de proveedores, compradores y administradores.
+## **2. Asociación de Usuarios a Empresas (AUE)**
 
-### Criterios de Aceptación:
-- Los roles disponibles deben incluir:
-  - **Proveedor:** acceso a perfil extendido y gestión de servicios.
-  - **Comprador:** acceso a la búsqueda y compra de servicios.
-  - **Administrador:** acceso a todas las funcionalidades del sistema.
-- Los roles deben estar presentes en el token JWT para ser verificados mediante middleware.
-- El backend debe validar los roles antes de permitir el acceso a recursos específicos.
+### **AUE-01**: Gestión de Asociaciones
+7. Como **administrador**, quiero invitar a nuevos usuarios a unirse a mi empresa mediante email.
+8. Como **usuario**, quiero aceptar una invitación para unirme a una empresa y comenzar a trabajar en ella.
+9. Como **usuario**, quiero desvincularme de una empresa en cualquier momento para dejar de trabajar con ella.
+10. Como **usuario**, quiero tener múltiples canales de operación: ser parte de varias empresas o gestionar mis actividades como persona natural.
 
 ---
 
-## Historia de Usuario 3: Endpoint para modificar datos de autenticación (Auth0)
-**Como** proveedor,  
-**quiero** modificar mi correo, contraseña y otros datos desde la plataforma,  
-**para** mantener mi perfil de autenticación actualizado sin salir del sistema.
+## **3. Roles y Permisos de Usuarios (RPU)**
 
-### Criterios de Aceptación:
-- El backend debe exponer un endpoint `/auth/update` que permita:
-  - Modificar correo y contraseña.
-  - Actualizar el nombre del perfil.
-- El frontend debe confirmar la identidad del usuario antes de permitir cambios sensibles (por ejemplo, pedir la contraseña actual).
-- El feedback debe ser claro, indicando el éxito o error de la operación.
+### **RPU-01**: Gestión de Roles y Permisos
+11. Como **administrador**, quiero asignar roles específicos a los usuarios de mi empresa (Ej: Analista de Compras, Vendedor).
+12. Como **administrador**, quiero editar los roles de los usuarios en cualquier momento para ajustar sus permisos.
+13. Como **usuario**, quiero tener múltiples roles dentro de la misma empresa para realizar distintas funciones.
+14. Como **administrador**, quiero transferir roles a otros usuarios, como el rol de administrador, para delegar responsabilidades.
+15. Como **usuario**, quiero ver los permisos asociados a mis roles para saber qué acciones puedo realizar.
 
 ---
 
-## Historia de Usuario 4: Endpoint para obtener información extendida del proveedor
-**Como** proveedor,  
-**quiero** obtener mi información extendida desde el backend,  
-**para** asegurar que mi perfil está actualizado y visible para los compradores.
+## **4. Gestión del Estado del Usuario (GEU)**
 
-### Criterios de Aceptación:
-- El endpoint `/provider/profile` debe devolver:
-  - Información específica (nombre comercial, dirección).
-  - Rubros/actividades en los que opera.
-  - Descripción general.
-- El frontend debe consumir este endpoint y mostrar la información en la interfaz del perfil del proveedor.
+### **GEU-01**: Manejo de Estados
+16. Como **usuario**, quiero poder cambiar mi estado entre activo e inactivo en una empresa específica.
+17. Como **administrador**, quiero inactivar usuarios para restringir temporalmente su acceso.
+18. Como **usuario sin empresa**, quiero ver un mensaje que me indique que debo unirme a una empresa o continuar operando como persona natural.
+19. Como **administrador**, quiero recibir notificaciones cuando un usuario se asocie o desvincule de mi empresa.
 
 ---
 
-## Historia de Usuario 5: CRUD para publicaciones de productos y servicios de un proveedor
-**Como** proveedor,  
-**quiero** gestionar publicaciones de productos y servicios,  
-**para** mantener mi oferta clara y actualizada para los compradores.
+## **5. Gestión de Empresas y Direcciones (GED)**
 
-### Criterios de Aceptación:
-- Cada publicación debe incluir:
-  - Título.
-  - Descripción.
-  - Estado (activo/inactivo).
-  - Rubro al que pertenece.
-- El CRUD debe permitir:
-  - Crear, leer, actualizar y eliminar publicaciones.
-- Las publicaciones deben estar vinculadas al perfil del proveedor y visibles en la plataforma.
+### **GED-01**: Gestión de Empresas
+20. Como **administrador**, quiero registrar y editar los datos de la empresa, incluyendo nombre, RUT y tipo de empresa.
+21. Como **usuario con permisos**, quiero consultar el listado de todas las empresas en las que estoy asociado.
+22. Como **administrador**, quiero eliminar una empresa, lo que desvinculará automáticamente a todos los usuarios asociados.
+
+### **GED-02**: Gestión de Dirección
+23. Como **administrador**, quiero registrar la dirección de la casa matriz de la empresa (región, comuna, latitud, longitud).
+24. Como **administrador**, quiero actualizar los datos de la dirección en cualquier momento.
+25. Como **usuario**, quiero poder ver la dirección registrada de la casa matriz para conocer su ubicación.
 
 ---
 
-## Historia de Usuario 6: Feed de publicaciones para proveedores
-**Como** proveedor,  
-**quiero** publicar en un feed general,  
-**para** compartir actualizaciones, novedades y promociones con otros usuarios y compradores.
+## **6. Optimización y Accesibilidad (OA)**
 
-### Criterios de Aceptación:
-- El feed debe mostrar publicaciones ordenadas por fecha.
-- Cada publicación debe incluir:
-  - Título.
-  - Descripción.
-  - Fecha de creación.
-  - Rubro al que pertenece.
-- Los proveedores deben poder:
-  - Editar o eliminar sus publicaciones.
-- El feed debe ser visible para compradores y proveedores, similar a un muro de LinkedIn.
+### **OA-01**: Validaciones y Búsqueda
+26. Como **usuario**, quiero que mi correo y RUT estén verificados y validados al momento de registrarme para evitar errores.
+27. Como **administrador**, quiero buscar usuarios por nombre o correo para gestionar más fácilmente sus roles.
 
----
+### **OA-02**: Restricciones y Exportaciones
+28. Como **administrador**, quiero que los usuarios no puedan eliminar su propia cuenta si son los únicos administradores de una empresa.
+29. Como **usuario**, quiero poder exportar un informe con todos los roles y permisos que tengo en cada empresa.
+30. Como **administrador**, quiero recibir alertas si se intenta registrar un RUT duplicado en la plataforma.
+31. Como **usuario inactivo**, quiero que se me informe si mi cuenta ha sido suspendida en alguna empresa.
 
-## Historia de Usuario 7: Panel de Administración para Proveedores
-**Como** proveedor,  
-**quiero** un panel que muestre estadísticas de mi actividad,  
-**para** tener una visión clara de mi desempeño.
-
-### Criterios de Aceptación:
-- El panel debe mostrar:
-  - Número de servicios activos.
-  - Publicaciones realizadas.
-  - Última actualización del perfil.
-- Debe existir un acceso rápido desde el panel para gestionar publicaciones y servicios.
-- El panel debe ser accesible solo para usuarios con el rol de proveedor.
-
----
-
-## Historia de Usuario 8: Búsqueda avanzada de proveedores por rubros y palabras clave
-**Como** comprador,  
-**quiero** buscar proveedores por rubro o términos específicos,  
-**para** encontrar la oferta más adecuada a mis necesidades.
-
-### Criterios de Aceptación:
-- La búsqueda debe permitir filtros por:
-  - Rubro.
-  - Nombre comercial.
-  - Palabras clave.
-- El backend debe proporcionar un endpoint `/providers/search` con resultados paginados.
-- A futuro, se implementará una IA que optimice los resultados según el perfil del comprador y los rubros del proveedor.
-ta
