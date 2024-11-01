@@ -13,12 +13,9 @@ Almacena la información esencial de los usuarios gestionada por Auth0.
 | Atributo          | Tipo de Dato       | Descripción                       |
 |-------------------|--------------------|-----------------------------------|
 | id                | UUID PRIMARY KEY   | Identificador único del usuario. |
-| email             | VARCHAR(255) UNIQUE | Correo electrónico del usuario. |
-| estado            | BOOLEAN            | Activo/Inactivo.                 |
+| email             | VARCHAR(255) UNIQUE | Correo electrónico del usuario (identificador). |
+| estado            | BOOLEAN            | Activo/Inactivo (controla acceso a la cuenta). |
 | creado_en         | TIMESTAMP          | Fecha de creación del usuario.   |
-| password_hash     | TEXT               | Hash de la contraseña (opcional para Auth0). |
-
-**Nota:** La gestión de contraseñas es delegada a **Auth0**. En caso de manejar contraseñas localmente, el **hash** se almacena en el campo `password_hash`.
 
 ---
 
@@ -30,10 +27,10 @@ Almacena los datos adicionales no gestionados por Auth0.
 |-------------------|--------------------|-----------------------------------|
 | id                | UUID PRIMARY KEY   | Mismo ID que en `usuario_auth0`. |
 | nombre            | VARCHAR(100)       | Nombre del usuario.              |
-| rut               | VARCHAR(12) UNIQUE | RUT del usuario validado.        |
-| creado_en         | TIMESTAMP          | Fecha de creación del registro.  |
+| telefono          | VARCHAR(15)        | Número de teléfono del usuario.  |
 
 ---
+
 
 ### **1.3. Empresa**
 **Tabla:** `empresas`  
@@ -42,14 +39,14 @@ Almacena la información de las empresas registradas.
 | Atributo          | Tipo de Dato       | Descripción                       |
 |-------------------|--------------------|-----------------------------------|
 | id                | SERIAL PRIMARY KEY | Identificador único de la empresa. |
-| nombre            | VARCHAR(255)       | Nombre de la empresa.            |
+| razon_social      | VARCHAR(255)       | Nombre de la empresa.            |
 | rut               | VARCHAR(12) UNIQUE | RUT único de la empresa.         |
 | estado            | BOOLEAN            | Activo/Inactivo.                 |
 | creado_en         | TIMESTAMP          | Fecha de creación de la empresa. |
 
 ---
 
-### **1.4. Dirección de Empresa**
+### **1.4. Dirección de Empresa [NO NECESARIO]**
 **Tabla:** `direcciones`  
 Define la dirección de la casa matriz de las empresas.
 
@@ -104,7 +101,7 @@ Define los permisos específicos que pueden ser asociados a los roles.
 
 ---
 
-### **1.8. Notificaciones**
+### **1.8. Notificaciones [NO NECESARIO]**
 **Tabla:** `notificaciones`  
 Gestiona las notificaciones enviadas a los usuarios sobre eventos importantes.
 
