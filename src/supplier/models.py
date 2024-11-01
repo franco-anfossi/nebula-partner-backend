@@ -9,6 +9,7 @@ class Supplier(Base):
     id = Column(Integer, primary_key=True, index=True)
     auth_id = Column(String, unique=True, nullable=False)  # ID de Auth0
     description = Column(String, nullable=True)  # Descripción opcional del proveedor
+    name = Column(String, nullable=True)  # Descripción opcional del proveedor
 
     def __repr__(self):
         return f"<Supplier(auth_id={self.auth_id}, description={self.description})>"

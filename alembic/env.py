@@ -10,7 +10,8 @@ print("sys.path:", sys.path)
 
 from src.config import settings
 from src.database import Base
-from src.supplier.models import Supplier
+from src.accounts.user.models import UsuarioPerfil
+
 
 # Configuración de Alembic
 config = context.config
