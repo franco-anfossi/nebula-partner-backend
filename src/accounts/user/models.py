@@ -3,19 +3,19 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from ...database import Base
 
-class UsuarioPerfil(Base):
-    __tablename__ = "usuario_perfiles"
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
 
     id = Column(Integer, primary_key=True, index=True)
-    auth_id = Column(String, unique=True, nullable=False)  # ID de Auth0
-    nombre = Column(String, nullable=False)
-    apellidos = Column(String, nullable=False)
-    telefono = Column(String, nullable=True)  # Campo opcional para el teléfono
-    estado = Column(Boolean, default=True)  # Activo/Inactivo
-    creado_en = Column(DateTime, default=datetime.utcnow)  # Fecha de creación
+    auth_id = Column(String, unique=True, nullable=False)  # Auth0 ID
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    phone = Column(String, nullable=True)  # Optional phone field
+    is_active = Column(Boolean, default=True)  # Active/Inactive
+    created_at = Column(DateTime, default=datetime.utcnow)  # Creation date
 
-    # Relación con la tabla intermedia UsuarioEmpresaRol
-    empresas_roles = relationship("UsuarioEmpresaRol", back_populates="usuario")
+    # Relationships
+    accounts = relationship("Account", back_populates="user_profile")
 
     def __repr__(self):
-        return f"<UsuarioPerfil(auth_id={self.auth_id}, nombre={self.nombre}, apellidos={self.apellidos}, estado={self.estado})>"
+        return f"<UserProfile(auth_id={self.auth_id}, first_name={self.first_name}, last_name={self.last_name}, is_active={self.is_active})>"
