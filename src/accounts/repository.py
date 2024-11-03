@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from .models import Supplier
+from .user_models import Supplier
 
 
 async def create_supplier(
