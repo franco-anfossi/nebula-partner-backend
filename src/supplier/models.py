@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String
-
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
 from ..database import Base
 
 
@@ -7,9 +7,13 @@ class Supplier(Base):
     __tablename__ = "suppliers"
 
     id = Column(Integer, primary_key=True, index=True)
-    auth_id = Column(String, unique=True, nullable=False)  # ID de Auth0
-    description = Column(String, nullable=True)  # Descripción opcional del proveedor
-    name = Column(String, nullable=True)  # Descripción opcional del proveedor
+    company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
+    description = Column(String, nullable=True)  # Descripción de servicios o productos
+    keywords = Column(String(255), nullable=True)  # Palabras clave para facilitar la búsqueda
+    category = Column(String(50), nullable=True)  # Categoría del producto o servicio
+
+    # Relación con Company
+    company = relationship("Company", back_populates="supplier")
 
     def __repr__(self):
-        return f"<Supplier(auth_id={self.auth_id}, description={self.description})>"
+        return f"<Supplier(company_id={self.company_id}, category={self.category})>"
