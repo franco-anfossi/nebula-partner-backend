@@ -1,20 +1,17 @@
-from logging.config import fileConfig
-from sqlalchemy import engine_from_config, pool
-from alembic import context
 import os
 import sys
+from logging.config import fileConfig
+
+from sqlalchemy import engine_from_config, pool
+
+from alembic import context
 
 # Añadir explícitamente el directorio `src` a sys.path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 print("sys.path:", sys.path)
 
 from src.config import settings
 from src.database import Base
-from src.account.models import Account
-from src.user.models import User
-from src.company.models import Company
-from src.supplier.models import Supplier
-
 
 # Configuración de Alembic
 config = context.config
@@ -30,6 +27,7 @@ config.set_main_option("sqlalchemy.url", sync_database_url)
 target_metadata = Base.metadata
 print("Target metadata:", target_metadata.tables.keys())
 
+
 def run_migrations_offline() -> None:
     """Configura el contexto para migraciones sin conexión."""
     url = config.get_main_option("sqlalchemy.url")
@@ -43,6 +41,7 @@ def run_migrations_offline() -> None:
 
     with context.begin_transaction():
         context.run_migrations()
+
 
 def run_migrations_online() -> None:
     """Configura el contexto para migraciones en línea."""
@@ -58,6 +57,7 @@ def run_migrations_online() -> None:
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():
             context.run_migrations()
+
 
 if context.is_offline_mode():
     run_migrations_offline()

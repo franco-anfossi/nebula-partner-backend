@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
 from ..database import Base
 
 
@@ -9,7 +10,9 @@ class Supplier(Base):
     id = Column(Integer, primary_key=True, index=True)
     company_id = Column(Integer, ForeignKey("companies.id"), nullable=False)
     description = Column(String, nullable=True)  # Descripción de servicios o productos
-    keywords = Column(String(255), nullable=True)  # Palabras clave para facilitar la búsqueda
+    keywords = Column(
+        String(255), nullable=True
+    )  # Palabras clave para facilitar la búsqueda
     category = Column(String(50), nullable=True)  # Categoría del producto o servicio
 
     # Relación con Company

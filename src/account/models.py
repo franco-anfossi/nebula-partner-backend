@@ -1,13 +1,17 @@
-from sqlalchemy import Column, Integer, Boolean, ForeignKey, String
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
 from ..database import Base
+
 
 class Account(Base):
     __tablename__ = "accounts"
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(String, ForeignKey("users.id_auth0"), nullable=False)
-    company_id = Column(Integer, ForeignKey("companies.id"), nullable=True)  # NULL si es cuenta personal
+    company_id = Column(
+        Integer, ForeignKey("companies.id"), nullable=True
+    )  # NULL si es cuenta personal
     is_active = Column(Boolean, default=True)  # Activo/Inactivo
 
     # Relaciones

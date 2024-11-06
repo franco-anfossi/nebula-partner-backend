@@ -1,7 +1,10 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime
-from sqlalchemy.orm import relationship
 from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
+from sqlalchemy.orm import relationship
+
 from ..database import Base
+
 
 class Company(Base):
     __tablename__ = "companies"
@@ -10,7 +13,7 @@ class Company(Base):
     legal_name = Column(String(255), nullable=False)
     tax_id = Column(String(12), unique=True, nullable=False)
     is_active = Column(Boolean, default=True)  # Activo/Inactivo
-    created_at = Column(DateTime, default=datetime.utcnow)  # Fecha de creación
+    created_at = Column(DateTime, default=datetime.now(datetime.timezone.utc))  # Fecha de creación
 
     # Relaciones
     accounts = relationship("Account", back_populates="company")

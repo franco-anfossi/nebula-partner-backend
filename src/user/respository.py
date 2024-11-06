@@ -1,8 +1,9 @@
+from models import User
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from models import User
 
 # CRUDs for User
+
 
 async def create_user(
     db: AsyncSession, user_id: str, first_name: str, last_name: str, phone: str = None
@@ -14,13 +15,19 @@ async def create_user(
     await db.refresh(new_user)
     return new_user
 
+
 async def get_user_by_id(db: AsyncSession, user_id: str) -> User:
     """Retrieve a user profile by their ID."""
     result = await db.execute(select(User).where(User.id_auth0 == user_id))
     return result.scalars().first()
 
+
 async def update_user(
-    db: AsyncSession, user_id: str, first_name: str = None, last_name: str = None, phone: str = None
+    db: AsyncSession,
+    user_id: str,
+    first_name: str = None,
+    last_name: str = None,
+    phone: str = None,
 ) -> User:
     """Update the details of an existing user profile."""
     user = await get_user_by_id(db, user_id)
@@ -34,6 +41,7 @@ async def update_user(
         await db.commit()
         await db.refresh(user)
     return user
+
 
 async def delete_user(db: AsyncSession, user_id: str) -> bool:
     """Delete a user profile by their ID."""
