@@ -16,6 +16,7 @@ router = APIRouter()
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_new_supplier(
     description: str = None,
+    name: str = None,
     db: AsyncSession = Depends(get_db),
     user: dict = Depends(get_current_user),
 ):
@@ -28,7 +29,7 @@ async def create_new_supplier(
             detail="Supplier with this Auth0 ID already exists.",
         )
 
-    supplier = await create_supplier(db, auth_id, description)
+    supplier = await create_supplier(db, auth_id, description, name)
     return supplier
 
 
