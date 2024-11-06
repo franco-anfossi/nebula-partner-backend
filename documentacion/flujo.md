@@ -10,9 +10,9 @@ Este documento describe el flujo de operación en la plataforma, enfocándose en
    - Un representante de una empresa se registra en la plataforma, proporcionando sus datos básicos como correo electrónico y contraseña.
    - Los datos iniciales se almacenan en la tabla `usuario_auth0` y luego en `user_profiles`, donde se guardan detalles adicionales como nombre, apellido y número de teléfono.
 
-2. **Creación de la Cuenta (`Account`) y Vinculación con la Empresa (`Company`)**:
-   - Una vez registrado, el usuario crea una `Account` vinculada a una `Company`.
-   - Si la empresa ya está registrada, el usuario puede solicitar acceso o seleccionar la empresa.
+2. **Creación de la Empresa (`Company`) y Vinculación con la Cuenta (`Account`)**:
+   - Una vez registrado por primera vez, el usuario crea una `Company` y automaticamente se crea un `Account` la cual se asocia a la compañia .
+   - Si la empresa ya está registrada tiene que tirar error. Si es que el usuario ya es parte de ella, tiene que estar la opcion de iniciar en esa empresa (si tiene más de una, seleccionar).
    - Si la empresa no existe en la plataforma, el usuario puede crear un registro en `companies`, proporcionando datos clave como nombre legal y RUT (tax ID).
    
 3. **Activación de la Cuenta**:
@@ -36,6 +36,10 @@ Este documento describe el flujo de operación en la plataforma, enfocándose en
 3. **Perfil de Comprador (`Buyer`)**:
    - Si la empresa se registra como `Buyer`, se crea un perfil en la tabla `buyers`.
    - Esto permite que la empresa acceda a funcionalidades específicas para compradores, como la búsqueda de proveedores y la publicación de licitaciones.
+
+4. **Extensión o reconfiguración de Perfil**:
+   - Una empresa puede cambiar su actividad en cualquier momento, pasando de `Supplier` a `Buyer` o viceversa.
+   - La empresa puede actualizar su perfil en cualquier momento, agregando o modificando información relevante.
 
 ---
 
