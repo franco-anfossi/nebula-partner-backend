@@ -73,3 +73,9 @@ update-deps:
 # generar estructura de la api
 structure:
 	$(PYTHON) python generate_structure.py
+
+# Generar reseteo BD
+db-reset:
+	$(PYTHON) alembic downgrade base
+	rm -rf alembic/versions/*
+	rm -rf versions/*

@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from ..models.company_model import Company
+from models import Company
 
 # CRUDs for Company
 
