@@ -2,11 +2,11 @@
 
 FRANCO:
 - Ampliar registro de usuario:
-  - Permitir un create usersi es que es priemra vez que entra.
+  - Permitir un create usersi es que es priemra vez que entra. ✅
 - Ver perfil de usuario
-  - Ver perfil de usuario
-  - Editar perfil de usuario
-  - Eliminar perfil de usuario
+  - Ver perfil de usuario ✅
+  - Editar perfil de usuario ✅
+  - Eliminar perfil de usuario ✅
   
 MAXI:
 - Crear Company:
