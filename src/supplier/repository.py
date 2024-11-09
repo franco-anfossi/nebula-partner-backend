@@ -3,8 +3,6 @@ from sqlalchemy.future import select
 
 from .models import Supplier
 
-# CRUDs for Supplier
-
 
 async def create_supplier(
     db: AsyncSession,

@@ -2,8 +2,6 @@ from models import Company
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-# CRUDs for Company
-
 
 async def create_company(
     db: AsyncSession, legal_name: str, tax_id: str, is_active: bool = True
