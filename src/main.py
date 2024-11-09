@@ -2,13 +2,13 @@ from fastapi import FastAPI
 
 from .auth.routes import router as auth_router
 from .middleware.cors import setup_cors
-from .supplier.routes import router as supplier_router
+from .user.routes import router as user_router
 
 app = FastAPI()
 
 setup_cors(app)
 app.include_router(auth_router, prefix="/api/auth", tags=["Auth"])
-app.include_router(supplier_router, prefix="/api/suppliers", tags=["Supplier"])
+app.include_router(user_router, prefix="/api/users", tags=["User"])
 
 
 @app.get("/")
