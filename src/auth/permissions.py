@@ -1,11 +1,7 @@
-from fastapi import HTTPException, status
+from ..exceptions import PermissionDenied
 
 
-def has_permission(user: dict, permission: str) -> bool:
-    """Verifica si el usuario tiene el permiso necesario."""
-    if permission not in user.get("permissions", []):
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="No tienes permiso para realizar esta acción.",
-        )
-    return True
+def check_user_permission(auth_id: str, user_id: str):
+    """Checks if the authenticated user has permission to access the resource."""
+    if auth_id != user_id:
+        raise PermissionDenied("You do not have permission to access this resource.")
