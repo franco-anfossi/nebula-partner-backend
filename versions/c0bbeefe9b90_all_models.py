@@ -1,8 +1,8 @@
-"""Change names & add auth0id
+"""all models
 
-Revision ID: 6a7b3cdff0a2
-Revises:
-Create Date: 2024-11-06 11:39:06.833224
+Revision ID: c0bbeefe9b90
+Revises: 20071d0d310b
+Create Date: 2024-11-08 20:09:18.440286
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "6a7b3cdff0a2"
-down_revision: Union[str, None] = None
+revision: str = "c0bbeefe9b90"
+down_revision: Union[str, None] = "20071d0d310b"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
