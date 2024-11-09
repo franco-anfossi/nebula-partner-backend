@@ -8,7 +8,6 @@ from alembic import context
 
 # Añadir explícitamente el directorio `src` a sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-print("sys.path:", sys.path)
 
 from src.config import settings
 from src.database import Base
@@ -20,18 +19,14 @@ if config.config_file_name is not None:
 
 # Ajustar la URL para que Alembic use una conexión síncrona
 sync_database_url = settings.DATABASE_URL.replace("+asyncpg", "")
-print("Original DATABASE_URL:", settings.DATABASE_URL)
-print("Sync DATABASE_URL for Alembic:", sync_database_url)
 config.set_main_option("sqlalchemy.url", sync_database_url)
 
 target_metadata = Base.metadata
-print("Target metadata:", target_metadata.tables.keys())
 
 
 def run_migrations_offline() -> None:
     """Configura el contexto para migraciones sin conexión."""
     url = config.get_main_option("sqlalchemy.url")
-    print("Running offline migrations with URL:", url)
     context.configure(
         url=url,
         target_metadata=target_metadata,
