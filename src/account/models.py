@@ -19,4 +19,8 @@ class Account(Base):
     company = relationship("Company", back_populates="accounts")
 
     def __repr__(self):
-        return f"<Account(user_id={self.user_id}, company_id={self.company_id}, is_active={self.is_active})>"
+        return (
+            f"<Account(uid={self.user_id}, "
+            f"cid={self.company_id}, "
+            f"act={self.is_active})>"
+        )

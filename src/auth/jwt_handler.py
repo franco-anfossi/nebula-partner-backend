@@ -72,7 +72,9 @@ async def verify_jwt(token: str) -> Dict:
     raise HTTPException(status_code=401, detail="No se pudo validar el token.")
 
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends()):
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(auth_scheme),
+):
     """Extrae y verifica el usuario desde el token JWT."""
     token = credentials.credentials
     payload = await verify_jwt(token)

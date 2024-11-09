@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     # Configuración de Auth0
     AUTH0_DOMAIN: str
     AUTH0_AUDIENCE: Optional[str]
+    AUTH0_MANAGEMENT_CLIENT_ID: str
+    AUTH0_MANAGEMENT_CLIENT_SECRET: str
+    AUTH0_MANAGEMENT_AUDIENCE: str
 
     # Configuración de JWT
     JWT_ALGORITHM: str = "RS256"

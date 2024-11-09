@@ -2,8 +2,6 @@ from models import Account
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-# CRUDs for Account
-
 
 async def create_account(
     db: AsyncSession, user_id: str, company_id: int = None, is_active: bool = True

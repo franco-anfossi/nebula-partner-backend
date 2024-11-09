@@ -16,4 +16,7 @@ class User(Base):
     accounts = relationship("Account", back_populates="user")
 
     def __repr__(self):
-        return f"<User(first_name={self.first_name}, last_name={self.last_name})>"
+        return (
+            f"<User(first_name={self.first_name}, "
+            f"last_name={self.last_name})>"
+        )
